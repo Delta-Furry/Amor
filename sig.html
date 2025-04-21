@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para Mi Princesa Alessandra</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+      color: #fff;
+      background: #000;
+    }
+    #bg-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+    .content {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 90%;
+      text-align: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 20px;
+      box-shadow: 0 0 20px #A50044;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #A50044;
+      text-shadow: 0 0 10px #004D98;
+    }
+    p {
+      font-size: 1.3rem;
+      line-height: 1.8;
+      text-shadow: 0 0 5px #222;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      p { font-size: 1.1rem; }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.min.js"></script>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="content">
+    <h1>Para Mi Princesa Alessandra</h1>
+    <p>
+      Alessandra, cada día que pasa me doy cuenta de la fortuna inmensa que tengo por tenerte en mi vida. Eres como esa estrella que brilla más fuerte cuando la noche parece oscura, como esa melodía que calma el corazón y hace bailar el alma. Tu valentía, tu ternura y esa luz que llevas dentro inspiran todo en mí. No solo eres mi pareja, eres mi mejor amiga, mi confidente, mi fuerza en los días grises y la razón de mi sonrisa más sincera. Gracias por ser auténtica, por compartir tu mundo conmigo, por enseñarme a ver la belleza en los pequeños detalles y por recordarme a diario cuánto puede amar un corazón cuando encuentra a su otra mitad. Eres mi persona favorita, mi princesa hermosa y lo más lindo que me ha pasado en la vida. Te amo, Alessandra. 💖⚽️💙❤️
+    </p>
+  </div>
+
+  <script>
+    new p5(p => {
+      let hearts = [];
+
+      p.setup = () => {
+        p.createCanvas(window.innerWidth, window.innerHeight);
+        for (let i = 0; i < 80; i++) {
+          hearts.push(new Heart());
+        }
+      };
+
+      p.draw = () => {
+        p.clear();
+        for (let h of hearts) {
+          h.update();
+          h.show();
+        }
+      };
+
+      class Heart {
+        constructor() {
+          this.x = p.random(p.width);
+          this.y = p.random(-p.height, 0);
+          this.size = p.random(10, 30);
+          this.speed = p.random(1.5, 4);
+          this.color = p.color(
+            p.random([165, 0]),  // Barça grana
+            p.random([0, 77]),   // Barça azul
+            p.random([68, 152]), 200
+          );
+        }
+        update() {
+          this.y += this.speed;
+          if (this.y > p.height) {
+            this.y = p.random(-50, 0);
+            this.x = p.random(p.width);
+          }
+        }
+        show() {
+          p.fill(this.color);
+          p.noStroke();
+          p.beginShape();
+          for (let t = 0; t < 360; t += 10) {
+            let rad = p.radians(t);
+            let x = 16 * Math.pow(Math.sin(rad), 3);
+            let y = -(13 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad));
+            p.vertex(this.x + x * this.size / 32, this.y + y * this.size / 32);
+          }
+          p.endShape(p.CLOSE);
+        }
+      }
+
+      p.windowResized = () => {
+        p.resizeCanvas(window.innerWidth, window.innerHeight);
+      };
+    });
+  </script>
+</body>
+</html>
