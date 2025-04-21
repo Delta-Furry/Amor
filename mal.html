@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>¿Te sientes mal, Alessandra?</title>
   <style>
     /* Reset y estilos generales */
@@ -23,9 +24,14 @@
       color: #004D98; /* Barça azul */
       text-shadow: 1px 1px 2px #A50044; /* Barça granate */
     }
+    /* Sketch container */
+    #sketch-holder {
+      width: 100%;
+      height: 50vh;
+    }
     /* Frases motivadoras */
     .phrase-box {
-      margin-top: 100px;
+      margin-top: 80px;
       background: rgba(255,255,255,0.85);
       padding: 15px 25px;
       border-radius: 20px;
@@ -41,7 +47,7 @@
       position: relative;
       width: 80%;
       max-width: 500px;
-      margin: 30px auto;
+      margin: 30px auto 60px;
       overflow: hidden;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -49,6 +55,7 @@
     .slide {
       display: none;
       width: 100%;
+      height: auto;
     }
     .slide.active {
       display: block;
@@ -67,6 +74,26 @@
     }
     .prev { left: 10px; }
     .next { right: 10px; }
+    /* Responsive ajustes */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      .phrase-box {
+        margin-top: 50px;
+        padding: 10px 15px;
+      }
+      .phrase-box span {
+        font-size: 1.2rem;
+      }
+      .carousel {
+        width: 90%;
+      }
+      .prev, .next {
+        font-size: 1.2rem;
+        padding: 6px 10px;
+      }
+    }
   </style>
   <!-- p5.js para animación tipo Processing en JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.min.js"></script>
@@ -93,11 +120,16 @@
   </div>
 
   <script>
+    // Variables de animación
+    const isMobile = window.innerWidth < 600;
+    const growthMax = isMobile ? 150 : 200;
+    const growthSpeed = isMobile ? 6 : 2;
+
     // ======== Animación de flor en forma de corazón (p5.js) ========
-    let growth = 0;
     new p5(p => {
+      let growth = 0;
       p.setup = () => {
-        const cnv = p.createCanvas(p.windowWidth, p.windowHeight);
+        const cnv = p.createCanvas(p.windowWidth, p.windowHeight * 0.5);
         cnv.parent('sketch-holder');
         p.angleMode(p.DEGREES);
         p.noStroke();
@@ -105,11 +137,11 @@
       p.draw = () => {
         p.clear();
         p.translate(p.width/2, p.height/2);
-        // Centro en forma de corazón
+        // Corazón central
         p.fill(168,19,62, 200);
         drawHeart(p, 0, 0, growth);
-        // Pétalos en forma de corazón
-        let petals = 8;
+        // Pétalos de corazones
+        let petals = isMobile ? 6 : 8;
         for (let i = 0; i < petals; i++) {
           p.push();
           p.rotate(360 * i / petals);
@@ -117,12 +149,13 @@
           drawHeart(p, growth/2 + 20, 0, growth/2);
           p.pop();
         }
-        if (growth < 200) growth += 1;
+        if (growth < growthMax) growth += growthSpeed;
       };
       p.windowResized = () => {
-        p.resizeCanvas(p.windowWidth, p.windowHeight);
+        p.resizeCanvas(p.windowWidth, p.windowHeight * 0.5);
       };
     });
+
     // Función para dibujar un corazón paramétrico
     function drawHeart(p, x, y, r) {
       const scale = r / 32;
@@ -148,22 +181,24 @@
     setInterval(() => {
       pi = (pi + 1) % phrases.length;
       document.getElementById('phrase').textContent = phrases[pi];
-    }, 4000);
+    }, isMobile ? 2500 : 4000);
 
     // ======== Lógica del carrusel ========
     let slideIndex = 0;
     const slides = document.querySelectorAll('.slide');
-    document.querySelector('.next').addEventListener('click', () => {
+    document.querySelector('.next').addEventListener('click', showNext);
+    document.querySelector('.prev').addEventListener('click', showPrev);
+    function showNext() {
       slides[slideIndex].classList.remove('active');
       slideIndex = (slideIndex + 1) % slides.length;
       slides[slideIndex].classList.add('active');
-    });
-    document.querySelector('.prev').addEventListener('click', () => {
+    }
+    function showPrev() {
       slides[slideIndex].classList.remove('active');
       slideIndex = (slideIndex - 1 + slides.length) % slides.length;
       slides[slideIndex].classList.add('active');
-    });
-    setInterval(() => { document.querySelector('.next').click(); }, 5000);
+    }
+    setInterval(showNext, isMobile ? 3000 : 5000);
   </script>
 </body>
 </html>
