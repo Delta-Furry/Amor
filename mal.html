@@ -2,13 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>¿Te sientes mal, Alejandra?</title>
+  <title>Te sientes mal, Alejandra?</title>
   <style>
     /* Reset y estilos generales */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      background: #f4f4f4;
+      background-color: #f0f0f0;
       color: #333;
       display: flex;
       flex-direction: column;
@@ -17,16 +17,27 @@
       text-align: center;
       overflow-x: hidden;
     }
+
     h1 {
       margin: 20px 0;
       font-size: 2.5rem;
-      color: #004D98; /* Barça blue */ 
-      text-shadow: 1px 1px 2px #A50044; /* Barça burgundy */ 
+      color: #004D98; /* Azul Barça */
+      text-shadow: 1px 1px 2px #A50044; /* Rojo Barça */
     }
-    /* Frases motivadoras */
+
+    /* Canvas de flores */
+    #flowerCanvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    /* Frases de ánimo */
     .phrase-box {
       margin-top: 100px;
-      background: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.8);
       padding: 15px 25px;
       border-radius: 20px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -34,8 +45,9 @@
     }
     .phrase-box span {
       font-size: 1.6rem;
-      color: #A50044; /* Barça burgundy */ 
+      color: #A50044;
     }
+
     /* Carrusel de fotos */
     .carousel {
       position: relative;
@@ -59,72 +71,88 @@
       transform: translateY(-50%);
       background: rgba(0,0,0,0.5);
       color: #fff;
+      padding: 10px;
       border: none;
-      font-size: 1.5rem;
-      padding: 8px 12px;
       border-radius: 50%;
       cursor: pointer;
     }
     .prev { left: 10px; }
     .next { right: 10px; }
   </style>
-  <!-- p5.js para animación tipo Processing en JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.min.js"></script>
 </head>
 <body>
+  <canvas id="flowerCanvas"></canvas>
   <h1>¿Te sientes mal, Alejandra?</h1>
-
-  <!-- Canvas de flor creciente -->
-  <div id="sketch-holder"></div>
 
   <!-- Caja de frases -->
   <div class="phrase-box">
-    <span id="phrase">Eres valiente y fuerte, Alejandra.</span>
+    <span id="phrase">Eres maravilloso/a y valiente.</span>
   </div>
 
   <!-- Carrusel de fotos -->
   <div class="carousel">
-    <img src="1.jpg" class="slide active" alt="Foto 1">
-    <img src="2.jpg" class="slide"     alt="Foto 2">
-    <img src="3.jpg" class="slide"     alt="Foto 3">
-    <img src="4.jpg" class="slide"     alt="Foto 4">
+    <img src="1.jpg" class="slide active">
+    <img src="2.jpg" class="slide">
+    <img src="3.jpg" class="slide">
+    <img src="4.jpg" class="slide">
     <button class="prev">❮</button>
     <button class="next">❯</button>
   </div>
 
   <script>
-    // ======== Animación de flor (p5.js) ========
-    let growth = 0;
-    new p5(p => {
-      p.setup = () => {
-        const cnv = p.createCanvas(p.windowWidth, p.windowHeight);
-        cnv.parent('sketch-holder');
-        p.angleMode(p.DEGREES);
-        p.noStroke();
-      };
-      p.draw = () => {
-        p.clear();
-        p.translate(p.width/2, p.height/2);
-        // Centro de la flor
-        p.fill(168,19,62, 200); // burgundy :contentReference[oaicite:3]{index=3}
-        p.ellipse(0,0, growth, growth);
-        // Pétalos
-        let petals = 8;
-        for (let i = 0; i < petals; i++) {
-          p.push();
-          p.rotate(360 * i / petals);
-          p.fill(0,77,152, 180); // blue :contentReference[oaicite:4]{index=4}
-          p.ellipse(growth/2 + 20, 0, growth/2, growth);
-          p.pop();
-        }
-        if (growth < 200) growth += 1;
-      };
-      p.windowResized = () => {
-        p.resizeCanvas(p.windowWidth, p.windowHeight);
-      };
-    });  
+    // Adaptar canvas a pantalla
+    const canvas = document.getElementById('flowerCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-    // ======== Frases motivadoras ========
+    // Clase Flor
+    class Flower {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * W;
+        this.y = H + Math.random() * 100;
+        this.size = Math.random() * 20 + 10;
+        this.speed = Math.random() * 1 + 0.5;
+        this.color = (Math.random() < 0.5) ? '#004D98' : '#A50044';
+        this.opacity = Math.random() * 0.5 + 0.4;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
+      }
+      update() {
+        this.y -= this.speed;
+        if (this.y < -50) this.reset();
+      }
+    }
+
+    // Crear flores
+    const flowers = [];
+    for (let i = 0; i < 80; i++) {
+      flowers.push(new Flower());
+    }
+    function animateFlowers() {
+      ctx.clearRect(0, 0, W, H);
+      flowers.forEach(f => { f.update(); f.draw(); });
+      requestAnimationFrame(animateFlowers);
+    }
+    animateFlowers();
+
+    // Frases de ánimo
     const phrases = [
       'Eres valiente y fuerte, Alejandra.',
       'Tu sonrisa ilumina el día.',
@@ -138,20 +166,19 @@
       document.getElementById('phrase').textContent = phrases[pi];
     }, 4000);
 
-    // ======== Lógica del carrusel (inspirada en W3Schools) ========
+    // Carrusel de fotos
     let slideIndex = 0;
     const slides = document.querySelectorAll('.slide');
-    document.querySelector('.next').addEventListener('click', () => {
-      slides[slideIndex].classList.remove('active');
-      slideIndex = (slideIndex + 1) % slides.length;
-      slides[slideIndex].classList.add('active');
-    });
-    document.querySelector('.prev').addEventListener('click', () => {
-      slides[slideIndex].classList.remove('active');
-      slideIndex = (slideIndex - 1 + slides.length) % slides.length;
-      slides[slideIndex].classList.add('active');
-    });
-    setInterval(() => { document.querySelector('.next').click(); }, 5000);
+    const prevBtn = document.querySelector('.prev');
+    const nextBtn = document.querySelector('.next');
+    function showSlide(n) {
+      slides.forEach((s, i) => s.classList.toggle('active', i === n));
+    }
+    function nextSlide() { slideIndex = (slideIndex + 1) % slides.length; showSlide(slideIndex); }
+    function prevSlide() { slideIndex = (slideIndex - 1 + slides.length) % slides.length; showSlide(slideIndex); }
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+    setInterval(nextSlide, 5000);
   </script>
 </body>
 </html>
