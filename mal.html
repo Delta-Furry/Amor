@@ -47,7 +47,7 @@
       position: relative;
       width: 80%;
       max-width: 500px;
-      margin: 30px auto 60px;
+      margin: 30px auto 20px;
       overflow: hidden;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -60,7 +60,7 @@
     .slide.active {
       display: block;
     }
-    .prev, .next {
+    .prev, .next, #nextPage {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
@@ -74,25 +74,25 @@
     }
     .prev { left: 10px; }
     .next { right: 10px; }
+    /* Botón Siguiente page */
+    #nextPage {
+      position: static;
+      margin: 10px auto 40px;
+      transform: none;
+      background: #004D98;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
     /* Responsive ajustes */
     @media (max-width: 600px) {
-      h1 {
-        font-size: 1.8rem;
-      }
-      .phrase-box {
-        margin-top: 50px;
-        padding: 10px 15px;
-      }
-      .phrase-box span {
-        font-size: 1.2rem;
-      }
-      .carousel {
-        width: 90%;
-      }
-      .prev, .next {
-        font-size: 1.2rem;
-        padding: 6px 10px;
-      }
+      h1 { font-size: 1.8rem; }
+      .phrase-box { margin-top: 50px; padding: 10px 15px; }
+      .phrase-box span { font-size: 1.2rem; }
+      .carousel { width: 90%; }
+      .prev, .next { font-size: 1.2rem; padding: 6px 10px; }
+      #nextPage { font-size: 1rem; padding: 8px 16px; }
     }
   </style>
   <!-- p5.js para animación tipo Processing en JavaScript -->
@@ -118,6 +118,9 @@
     <button class="prev">❮</button>
     <button class="next">❯</button>
   </div>
+
+  <!-- Botón Siguiente -->
+  <button id="nextPage">Siguiente</button>
 
   <script>
     // Variables de animación
@@ -174,7 +177,7 @@
       'Eres valiente y fuerte, Alessandra.',
       'Tu sonrisa ilumina el día.',
       'Cada paso cuenta, sigue adelante.',
-      'El Barcelona juega con tu pasión y tu corazón.',
+      'El Barça juega con tu pasión y tu corazón.',
       'Eres amada tal como eres.'
     ];
     let pi = 0;
@@ -188,6 +191,8 @@
     const slides = document.querySelectorAll('.slide');
     document.querySelector('.next').addEventListener('click', showNext);
     document.querySelector('.prev').addEventListener('click', showPrev);
+    document.getElementById('nextPage').addEventListener('click', showNext);
+
     function showNext() {
       slides[slideIndex].classList.remove('active');
       slideIndex = (slideIndex + 1) % slides.length;
