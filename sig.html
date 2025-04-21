@@ -8,25 +8,23 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      overflow: hidden;
+      overflow-x: hidden;
       color: #fff;
       background: #000;
     }
     #bg-canvas {
       position: fixed;
       top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       z-index: -1;
     }
     .content {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 90%;
+      max-width: 800px;
+      margin: 30px auto;
       text-align: center;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.65);
+      padding: 30px 20px;
+      background: rgba(0, 0, 0, 0.7);
       border-radius: 20px;
       box-shadow: 0 0 20px #A50044;
     }
@@ -41,12 +39,19 @@
       line-height: 1.8;
       text-shadow: 0 0 5px #222;
     }
+
     @media (max-width: 600px) {
-      h1 { font-size: 2rem; }
-      p { font-size: 1.1rem; }
       .content {
-        padding: 15px;
-        max-width: 95%;
+        margin: 20px 10px;
+        padding: 20px 15px;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+      }
+      p {
+        font-size: 1.05rem;
+        line-height: 1.6;
       }
     }
   </style>
@@ -94,8 +99,8 @@
           this.size = p.random(10, 30);
           this.speed = p.random(1.5, 4);
           this.color = p.color(
-            p.random([165, 0]),  // Barça grana
-            p.random([0, 77]),   // Barça azul
+            p.random([165, 0]),
+            p.random([0, 77]),
             p.random([68, 152]), 200
           );
         }
